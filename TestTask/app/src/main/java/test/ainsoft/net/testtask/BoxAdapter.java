@@ -1,19 +1,18 @@
 package test.ainsoft.net.testtask;
 //
 
-import android.widget.CheckBox;
-
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class BoxAdapter extends BaseAdapter {
     Context ctx;
@@ -59,7 +58,7 @@ public class BoxAdapter extends BaseAdapter {
         // заполняем View в пункте списка данными : наименование, картинка
 
         ((TextView) view.findViewById(R.id.tvDescr)).setText(p.name);
-        //((ImageView) view.findViewById(R.id.ivImage)).setImageResource(p.image);
+        ((ImageView) view.findViewById(R.id.ivImage)).setImageResource(p.image);
 
 
 

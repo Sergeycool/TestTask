@@ -1,23 +1,67 @@
 package test.ainsoft.net.testtask;
 
 
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 
 import java.util.ArrayList;
 
 public class Admin {
 
     String name;
-    Drawable image;
+    int image;
     boolean box;
-   // ArrayList<Points> points;
+    ArrayList<Points> points;
+    int color;
 
 
-    Admin(String _describe, Drawable _image, boolean _box) {
+    Admin(String _describe, int _image, boolean _box, ArrayList<Points> _points, int _color) {
         name = _describe;
         image = _image;
-        //points = _points;
         box = _box;
+        points = _points;
+        color = _color;
     }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getImage() {
+        return image;
+    }
+
+    public void setImage(int image) {
+        this.image = image;
+    }
+
+    public boolean isBox() {
+        return box;
+    }
+
+    public void setBox(boolean box) {
+        this.box = box;
+    }
+
+    public ArrayList<Points> getPoints() {
+        return points;
+    }
+
+    public void setPoints(ArrayList<Points> points) {
+        this.points = points;
+    }
+
+
 
 }

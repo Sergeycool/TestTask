@@ -3,4 +3,12 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="HUE_AZURE">#FF03A9F4</color>
+    <color name="HUE_BLUE">#FF4051B0</color>
+    <color name="HUE_VIOLET">#FF825AC8</color>
+    <color name="HUE_MAGENTA">#FFF45AD3</color>
+    <color name="HUE_ORANGE">#FFFFA828</color>
+    <color name="HUE_RED">#FFF85448</color>
+    <color name="HUE_GREEN">#FF7FE046</color>
 </resources>
