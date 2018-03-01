@@ -37,13 +37,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     ArrayList<Admin> admins = new ArrayList<Admin>();
     ArrayList<Points> points = new ArrayList<Points>();
-    //   ArrayList<Admin> checkedAdmin = new ArrayList<>();
     BoxAdapter boxAdapter;
     Random random = new Random();
     private int count;
+    private int mCount;
 
     private GoogleMap mMap;
-    private static final LatLng CENTER = new LatLng(48.091149, 36.023487);
+    private static final LatLng CENTER = new LatLng(47.832910, 35.192243);
     Button button;
 
     float colors[] = {BitmapDescriptorFactory.HUE_AZURE,
@@ -62,6 +62,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             R.color.HUE_MAGENTA,
             R.color.HUE_ORANGE,
             R.color.HUE_RED};
+
+    int icons[] = {R.drawable.ic_admin_azure,
+            R.drawable.ic_admin_blue,
+            R.drawable.ic_admin_violet,
+            R.drawable.ic_admin_green,
+            R.drawable.ic_admin_magenta,
+            R.drawable.ic_admin_orange,
+            R.drawable.ic_admin_red};
 
 
     @Override
@@ -110,14 +118,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void setDataPoint() {
         points = new ArrayList<>();
-        double max = 0.0001;
-        double min = 0.000001;
+        double max = 0.01;
         for (int i = 1; i <= 7; i++) {
-            points.add(new Points(48.091149 + random.nextDouble() + max - min,
-                    36.023487 + random.nextDouble() + max - min, "12:00"));
+            points.add(new Points(47.832910 + random.nextDouble() + max,
+                    35.192243 + random.nextDouble() + max, "12:00"));
         }
     }
-
 
     // генерируем данные для адаптера
     void fillData() {
@@ -126,7 +132,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (int i = 0; i < 7; i++) {
             setDataPoint();
             admins.add(new Admin("Admin " + (i + 1),
-                    R.drawable.ic_admin, false, points, intCols[i]));
+                    icons[i], false, points, intCols[i]));
         }
     }
 
@@ -135,7 +141,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         public void run() {
             count = 0;
+            //mCount = 0;
             for (int i = 0; i < mCheckedAdmin.size();i++ ) {
+                //mCount = i;
+
+                //Cannot find local variable 'i'  !!!!!!!!!!!!
                 final Admin admin = mCheckedAdmin.get(i);
 
                 for (int j = 1; j < mCheckedAdmin.size(); j++) {
@@ -143,7 +153,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                                getPolyLine(admin.getPoints().get(count - 1), admin.getPoints().get(count));
+                                getPolyLine(admin.points.get(count - 1), admin.points.get(count));
+
+                                //simple points or getPoints !!!
                         }
                     });
                     try {
@@ -188,13 +200,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap map) {
         mMap = map;
-        //mMap.setMinZoomPreference(8.0f);
         mMap.setMaxZoomPreference(18.0f);
         mMap.animateCamera(CameraUpdateFactory.zoomTo(13), 2000, null);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CENTER, 9));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CENTER, 8));
 
 
         pinMarkers();
+
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+
+                //remove ArrayList of Polyline
+
+                mMap.clear();
+
+            }
+        });
 
 
     }
@@ -291,7 +314,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
 
                 lineOptions.addAll(points);
-                lineOptions.width(12);
+                lineOptions.width(8);
                 lineOptions.color(getResources().getColor(intCols[i]));
                 lineOptions.geodesic(true);
 
