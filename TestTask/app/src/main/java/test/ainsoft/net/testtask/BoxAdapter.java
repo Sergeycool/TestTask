@@ -15,11 +15,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class BoxAdapter extends BaseAdapter {
+    private OnCheckItemListener mListener;
     Context ctx;
     LayoutInflater lInflater;
     ArrayList<Admin> objects;
 
     BoxAdapter(Context context, ArrayList<Admin> products) {
+        if (context instanceof OnCheckItemListener)
+            mListener = (OnCheckItemListener) context;
         ctx = context;
         objects = products;
         lInflater = (LayoutInflater) ctx
@@ -46,7 +49,7 @@ public class BoxAdapter extends BaseAdapter {
 
     // пункт списка
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         // используем созданные, но не используемые view
         View view = convertView;
         if (view == null) {
@@ -61,10 +64,16 @@ public class BoxAdapter extends BaseAdapter {
         ((ImageView) view.findViewById(R.id.ivImage)).setImageResource(p.image);
 
 
-
         CheckBox cbBuy = (CheckBox) view.findViewById(R.id.cbBox);
         // присваиваем чекбоксу обработчик
-        cbBuy.setOnCheckedChangeListener(myCheckChangeList);
+        cbBuy.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView,
+                                         boolean isChecked) {
+                // меняем данные товара (в корзине или нет)
+                getAdmin((Integer) buttonView.getTag()).box = isChecked;
+                mListener.onChecked(isChecked, position);
+            }
+        });
         // пишем позицию
         cbBuy.setTag(position);
 
@@ -88,12 +97,10 @@ public class BoxAdapter extends BaseAdapter {
         return box;
     }
 
-    // обработчик для чекбоксов
-    OnCheckedChangeListener myCheckChangeList = new OnCheckedChangeListener() {
-        public void onCheckedChanged(CompoundButton buttonView,
-                                     boolean isChecked) {
-            // меняем данные товара (в корзине или нет)
-            getAdmin((Integer) buttonView.getTag()).box = isChecked;
-        }
-    };
+    public interface OnCheckItemListener {
+
+        void onChecked(boolean isChecked, int position);
+
+
+    }
 }

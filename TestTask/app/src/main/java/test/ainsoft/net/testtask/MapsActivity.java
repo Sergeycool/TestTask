@@ -1,6 +1,5 @@
 package test.ainsoft.net.testtask;
 
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -18,8 +17,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONObject;
@@ -35,15 +34,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,BoxAdapter.OnCheckItemListener {
 
 
     ArrayList<Admin> admins = new ArrayList<Admin>();
     ArrayList<Points> points = new ArrayList<Points>();
     BoxAdapter boxAdapter;
     Random random = new Random();
-    private int count;
-    private int mCount;
+//    private int count;
+//    private int mCount;
 
     private GoogleMap mMap;
     private static final LatLng CENTER = new LatLng(47.832910, 35.192243);
@@ -100,26 +99,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View view) {
 
 
-                ArrayList<Admin> chAds = showResult();
-
-                for (int j = 0; j < chAds.size(); j++) {
-
-
-                    LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
-                    for (int i = 0; i < 7; i++) {
-                        LatLng latLng = new LatLng(chAds.get(j).getPoints().get(i).getLatitude(),
-                                chAds.get(j).getPoints().get(i).getLongitude());
-                        latLngBuilder.include(latLng);
-                    }
-
-                    int size = getResources().getDisplayMetrics().widthPixels;
-                    LatLngBounds latLngBounds = latLngBuilder.build();
-                    CameraUpdate track = CameraUpdateFactory.newLatLngBounds(latLngBounds, size, size, 25);
-                    mMap.moveCamera(track);
-
-               }
-
-                pinMarkers();
 
                 new PolyLineBuilder().start();
             }
@@ -162,9 +141,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    @Override
+    public void onChecked(boolean isChecked, int position) {
+        if(isChecked){
+            pinMarkers(position);
+
+            ArrayList<Admin> chAds = showResult();
+
+            for (int j = 0; j < chAds.size(); j++) {
+
+
+                LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
+                for (int i = 0; i < 7; i++) {
+                    LatLng latLng = new LatLng(chAds.get(j).getPoints().get(i).getLatitude(),
+                            chAds.get(j).getPoints().get(i).getLongitude());
+                    latLngBuilder.include(latLng);
+                }
+
+                int size = getResources().getDisplayMetrics().widthPixels;
+                LatLngBounds latLngBounds = latLngBuilder.build();
+                CameraUpdate track = CameraUpdateFactory.newLatLngBounds(latLngBounds, size, size, 25);
+                mMap.moveCamera(track);
+
+            }
+        }else {
+
+            mMap.clear();
+
+            ArrayList<Admin> mCheckedAdmin = showResult();
+            for(Admin admin: mCheckedAdmin ){
+                pinMarkers(admin);
+
+            }
+
+        }
+
+    }
+
     private class PolyLineBuilder extends Thread {
         private ArrayList<Admin> mCheckedAdmin = showResult();
-
+        private int count;
+        private int mCount;
         @Override
         public void run() {
             count = 0;
@@ -203,16 +220,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public ArrayList<Admin> showResult() {
         ArrayList<Admin> checkedAdmin = new ArrayList<>();
-        String result = "Выбраны админы:";
         for (Admin p : boxAdapter.getBox()) {
             if (p.box) {
-                result += "\n" + p.name;
                 checkedAdmin.add(p);
+
+
             }
         }
 
+
         return checkedAdmin;
     }
+
+
+    public void pinMarkers(int position) {
+//        ArrayList<Admin> checkedAdmin = showResult();
+        //for (int i = 0; i < checkedAdmin.size(); i++) {
+        ArrayList<Points> mPoints = admins.get(position).getPoints();
+
+        for (int j = 0; j < mPoints.size(); j++) {
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(mPoints.get(j).getLatitude(), mPoints.get(j).getLongitude()))
+                    .title(mPoints.get(j).date)
+                    .icon(BitmapDescriptorFactory.defaultMarker(admins.get(position).getfColor())));
+        }
+
+    }
+
+    public void pinMarkers(Admin admin) {
+//        ArrayList<Admin> checkedAdmin = showResult();
+        //for (int i = 0; i < checkedAdmin.size(); i++) {
+        ArrayList<Points> mPoints = admin.getPoints();
+
+        for (int j = 0; j < mPoints.size(); j++) {
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(mPoints.get(j).getLatitude(), mPoints.get(j).getLongitude()))
+                    .title(mPoints.get(j).date)
+                    .icon(BitmapDescriptorFactory.defaultMarker(admin.getfColor())));
+        }
+
+    }
+
 
     @Override
     public void onMapReady(GoogleMap map) {
@@ -230,24 +278,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-
-    }
-
-    public void pinMarkers() {
-
-
-        ArrayList <Admin> checkAdm = showResult();
-
-        for (int i = 0; i < checkAdm.size(); i++) {
-
-            for (int j = 0; j < points.size(); j++) {
-                mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(checkAdm.get(i).points.get(j).getLatitude(), checkAdm.get(i).points.get(j).getLongitude()))
-                        .title(checkAdm.get(i).getPoints().get(j).date)
-                        .icon(BitmapDescriptorFactory.defaultMarker(checkAdm.get(i).getfColor())));
-            }
-
-        }
 
     }
 

@@ -1,8 +1,6 @@
 package test.ainsoft.net.testtask;
 
 
-import android.graphics.Color;
-
 import java.util.ArrayList;
 
 public class Admin {
@@ -13,8 +11,6 @@ public class Admin {
     ArrayList<Points> points;
     int color;
     float fColor;
-
-
 
 
     Admin(String _describe, int _image, boolean _box, ArrayList<Points> _points, int _color, float _fColor) {

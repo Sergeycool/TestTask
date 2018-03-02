@@ -1,27 +1,30 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/map"
+        android:layout_weight="7"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         tools:context="test.ainsoft.net.testtask.MapsActivity" />
 
 
     <ListView
         android:id="@+id/lvMain"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="0dp"
+        android:layout_weight="3"
         android:layout_above="@+id/play"
         android:layout_alignParentStart="true"
-        android:scrollbars="horizontal"
-        android:background="#99ffffff"/>
+        android:background="#ffffff"
+        android:scrollbars="horizontal" />
 
     <Button
         android:id="@+id/play"
@@ -31,4 +34,4 @@ android:layout_height="match_parent">
         android:layout_alignParentStart="true"
         android:text="@string/play" />
 
-</RelativeLayout>
+</LinearLayout>
