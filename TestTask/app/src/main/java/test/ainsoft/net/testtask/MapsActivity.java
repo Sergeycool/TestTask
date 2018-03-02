@@ -109,7 +109,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     for (int i = 0; i < 7; i++) {
                         LatLng latLng = new LatLng(chAds.get(j).getPoints().get(i).getLatitude(),
                                 chAds.get(j).getPoints().get(i).getLongitude());
-                        Log.i("latLng ", " = " + latLng);
                         latLngBuilder.include(latLng);
                     }
 
@@ -120,6 +119,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                }
 
+                pinMarkers();
 
                 new PolyLineBuilder().start();
             }
@@ -158,7 +158,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (int i = 0; i < 7; i++) {
             setDataPoint();
             admins.add(new Admin("Admin " + (i + 1),
-                    icons[i], false, points, intCols[i]));
+                    icons[i], false, points, intCols[i],colors[i]));
         }
     }
 
@@ -221,16 +221,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.animateCamera(CameraUpdateFactory.zoomTo(13), 2000, null);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CENTER, 8));
 
-
-        pinMarkers();
-
-
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
 
                 mMap.clear();
-                pinMarkers();
 
             }
         });
@@ -240,13 +235,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void pinMarkers() {
 
-        for (int i = 0; i < admins.size(); i++) {
+
+        ArrayList <Admin> checkAdm = showResult();
+
+        for (int i = 0; i < checkAdm.size(); i++) {
 
             for (int j = 0; j < points.size(); j++) {
                 mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(admins.get(i).points.get(j).latitude, admins.get(i).points.get(j).getLongitude()))
-                        .title(admins.get(i).points.get(j).date)
-                        .icon(BitmapDescriptorFactory.defaultMarker(colors[i])));
+                        .position(new LatLng(checkAdm.get(i).points.get(j).getLatitude(), checkAdm.get(i).points.get(j).getLongitude()))
+                        .title(checkAdm.get(i).getPoints().get(j).date)
+                        .icon(BitmapDescriptorFactory.defaultMarker(checkAdm.get(i).getfColor())));
             }
 
         }
@@ -349,7 +347,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 lineOptions.addAll(points);
                 lineOptions.color(getResources().getColor(color));
-                Log.i("color", ": " + color);
                 lineOptions.width(8);
 
                 lineOptions.geodesic(true);

@@ -12,14 +12,27 @@ public class Admin {
     boolean box;
     ArrayList<Points> points;
     int color;
+    float fColor;
 
 
-    Admin(String _describe, int _image, boolean _box, ArrayList<Points> _points, int _color) {
+
+
+    Admin(String _describe, int _image, boolean _box, ArrayList<Points> _points, int _color, float _fColor) {
         name = _describe;
         image = _image;
         box = _box;
         points = _points;
         color = _color;
+        fColor = _fColor;
+
+    }
+
+    public float getfColor() {
+        return fColor;
+    }
+
+    public void setfColor(float fColor) {
+        this.fColor = fColor;
     }
 
     public int getColor() {

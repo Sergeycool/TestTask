@@ -20,7 +20,8 @@ android:layout_height="match_parent">
         android:layout_height="200dp"
         android:layout_above="@+id/play"
         android:layout_alignParentStart="true"
-        android:scrollbars="horizontal" />
+        android:scrollbars="horizontal"
+        android:background="#99ffffff"/>
 
     <Button
         android:id="@+id/play"
