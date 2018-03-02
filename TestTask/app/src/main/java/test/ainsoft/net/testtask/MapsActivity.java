@@ -10,13 +10,16 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONObject;
@@ -95,6 +98,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
+                ArrayList<Admin> chAds = showResult();
+
+                for (int j = 0; j < chAds.size(); j++) {
+
+
+                    LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
+                    for (int i = 0; i < 7; i++) {
+                        LatLng latLng = new LatLng(chAds.get(j).getPoints().get(i).getLatitude(),
+                                chAds.get(j).getPoints().get(i).getLongitude());
+                        Log.i("latLng ", " = " + latLng);
+                        latLngBuilder.include(latLng);
+                    }
+
+                    int size = getResources().getDisplayMetrics().widthPixels;
+                    LatLngBounds latLngBounds = latLngBuilder.build();
+                    CameraUpdate track = CameraUpdateFactory.newLatLngBounds(latLngBounds, size, size, 25);
+                    mMap.moveCamera(track);
+
+               }
+
+
                 new PolyLineBuilder().start();
             }
         });
@@ -203,9 +229,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onMapClick(LatLng latLng) {
 
-                //remove ArrayList of Polyline
-
                 mMap.clear();
+                pinMarkers();
 
             }
         });
@@ -303,7 +328,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             ArrayList points = null;
             PolylineOptions lineOptions = null;
             MarkerOptions markerOptions = new MarkerOptions();
-            ArrayList<Admin> mCheckedAdmin = showResult();
+            //ArrayList<Admin> mCheckedAdmin = showResult();
 
             for (int i = 0; i < result.size(); i++) {
                 points = new ArrayList();
