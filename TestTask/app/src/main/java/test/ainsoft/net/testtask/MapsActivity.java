@@ -101,7 +101,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    private void getPolyLine(Points start, Points end) {
+    private void getPolyLine(Points start, Points end, int color) {
 
         LatLng startL = new LatLng(start.getLatitude(), start.getLongitude());
         LatLng endL = new LatLng(end.getLatitude(), end.getLongitude());
@@ -110,7 +110,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String url = getDirectionsUrl(startL, endL);
 
         DownloadTask downloadTask = new DownloadTask();
-
+        downloadTask.setColor(color);
         // Start downloading json data from Google Directions API
         downloadTask.execute(url);
     }
@@ -138,24 +138,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private class PolyLineBuilder extends Thread {
         private ArrayList<Admin> mCheckedAdmin = showResult();
+
         @Override
         public void run() {
             count = 0;
-            //mCount = 0;
-            for (int i = 0; i < mCheckedAdmin.size();i++ ) {
-                //mCount = i;
+            mCount = 0;
+            Log.i("PolyLineBuilder", "mCheckedAdmin size: " + mCheckedAdmin.size());
 
-                //Cannot find local variable 'i'  !!!!!!!!!!!!
-                final Admin admin = mCheckedAdmin.get(i);
 
-                for (int j = 1; j < mCheckedAdmin.size(); j++) {
+            for (int i = 0; i < mCheckedAdmin.size(); i++) {
+                mCount = i;
+//                final Admin admin = mCheckedAdmin.get(i);
+
+                for (int j = 0; j < mCheckedAdmin.get(mCount).getPoints().size(); j++) {
                     count = j;
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                                getPolyLine(admin.points.get(count - 1), admin.points.get(count));
-
-                                //simple points or getPoints !!!
+                            if (count != 0) {
+                                getPolyLine(mCheckedAdmin.get(mCount).getPoints().get(count - 1),
+                                        mCheckedAdmin.get(mCount).getPoints().get(count),
+                                        mCheckedAdmin.get(mCount).getColor());
+                            }
                         }
                     });
                     try {
@@ -180,20 +185,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
 
-        Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
-//        Admin admin = admins.get(0);
-//
-//        for (int i = 1; i < admin.getPoints().size(); i++) {
-//            if (i == 1)
-//                getPolyLine(admin.getPoints().get(0), admin.getPoints().get(i));
-//            else
-//                getPolyLine(admin.getPoints().get(i - 1), admin.getPoints().get(i));
-//            try {
-//                Thread.sleep(2000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
         return checkedAdmin;
     }
 
@@ -230,7 +221,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(admins.get(i).points.get(j).latitude, admins.get(i).points.get(j).getLongitude()))
                         .title(admins.get(i).points.get(j).date)
-                        .icon(BitmapDescriptorFactory.defaultMarker(colors[j])));
+                        .icon(BitmapDescriptorFactory.defaultMarker(colors[i])));
             }
 
         }
@@ -239,6 +230,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     private class DownloadTask extends AsyncTask<String, Void, String> {
+        private int color;
+
+        public int getColor() {
+            return color;
+        }
+
+        public void setColor(int color) {
+            this.color = color;
+        }
 
         @Override
         protected String doInBackground(String... url) {
@@ -258,8 +258,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             super.onPostExecute(result);
 
             ParserTask parserTask = new ParserTask();
-
-
+            parserTask.setColor(color);
             parserTask.execute(result);
 
         }
@@ -271,6 +270,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
 
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
+        private int color;
+
+        public int getColor() {
+            return color;
+        }
+
+        public void setColor(int color) {
+            this.color = color;
+        }
 
         // Parsing the data in non-ui thread
         @Override
@@ -293,9 +301,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
             ArrayList points = null;
-            Color color;
             PolylineOptions lineOptions = null;
             MarkerOptions markerOptions = new MarkerOptions();
+            ArrayList<Admin> mCheckedAdmin = showResult();
 
             for (int i = 0; i < result.size(); i++) {
                 points = new ArrayList();
@@ -310,17 +318,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     double lng = Double.parseDouble(point.get("lng"));
                     LatLng position = new LatLng(lat, lng);
 
+
                     points.add(position);
                 }
 
                 lineOptions.addAll(points);
+                lineOptions.color(getResources().getColor(color));
+                Log.i("color", ": " + color);
                 lineOptions.width(8);
-                lineOptions.color(getResources().getColor(intCols[i]));
+
                 lineOptions.geodesic(true);
 
             }
 
-// Drawing polyline in the Google Map for the i-th route
+            // Drawing polyline in the Google Map for the i-th route
             if (lineOptions != null)
                 mMap.addPolyline(lineOptions);
         }
