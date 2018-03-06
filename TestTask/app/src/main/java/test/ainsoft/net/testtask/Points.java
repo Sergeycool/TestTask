@@ -1,13 +1,11 @@
 package test.ainsoft.net.testtask;
 
 
-import java.util.Date;
-
 public class Points {
 
-    double latitude;
-    double longitude;
-    String date;
+    private double latitude;
+    private double longitude;
+    private String date;
 
     //long curDate = System.currentTimeMillis();
 
@@ -17,6 +15,18 @@ public class Points {
         latitude = _lat;
         longitude = _lon;
         date = _date;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public double getLatitude() {

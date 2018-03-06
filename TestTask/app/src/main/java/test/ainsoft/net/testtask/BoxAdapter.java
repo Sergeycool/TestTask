@@ -59,25 +59,23 @@ public class BoxAdapter extends BaseAdapter {
         Admin p = getAdmin(position);
 
         // заполняем View в пункте списка данными : наименование, картинка
+        ((TextView) view.findViewById(R.id.tvDescr)).setText(p.getName());
+        ((ImageView) view.findViewById(R.id.ivImage)).setImageResource(p.getImage());
 
-        ((TextView) view.findViewById(R.id.tvDescr)).setText(p.name);
-        ((ImageView) view.findViewById(R.id.ivImage)).setImageResource(p.image);
 
-
-        CheckBox cbBuy = (CheckBox) view.findViewById(R.id.cbBox);
+        CheckBox cbBuy = view.findViewById(R.id.cbBox);
         // присваиваем чекбоксу обработчик
         cbBuy.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
-                // меняем данные товара (в корзине или нет)
-                getAdmin((Integer) buttonView.getTag()).box = isChecked;
+                getAdmin((Integer) buttonView.getTag()).setBox(isChecked);
                 mListener.onChecked(isChecked, position);
             }
         });
         // пишем позицию
         cbBuy.setTag(position);
 
-        cbBuy.setChecked(p.box);
+        cbBuy.setChecked(p.isBox());
         return view;
     }
 
@@ -86,12 +84,12 @@ public class BoxAdapter extends BaseAdapter {
         return ((Admin) getItem(position));
     }
 
-    // содержимое корзины
+
     ArrayList<Admin> getBox() {
         ArrayList<Admin> box = new ArrayList<Admin>();
         for (Admin p : objects) {
             // если в корзине
-            if (p.box)
+            if (p.isBox())
                 box.add(p);
         }
         return box;

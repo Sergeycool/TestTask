@@ -5,12 +5,12 @@ import java.util.ArrayList;
 
 public class Admin {
 
-    String name;
-    int image;
-    boolean box;
-    ArrayList<Points> points;
-    int color;
-    float fColor;
+    private String name;
+    private int image;
+    private boolean box;
+    private ArrayList<Points> points;
+    private int color;
+    private float fColor;
 
 
     Admin(String _describe, int _image, boolean _box, ArrayList<Points> _points, int _color, float _fColor) {

@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -17,7 +16,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -35,7 +33,6 @@ import java.util.List;
 import java.util.Random;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,BoxAdapter.OnCheckItemListener {
-
 
     ArrayList<Admin> admins = new ArrayList<Admin>();
     ArrayList<Points> points = new ArrayList<Points>();
@@ -168,11 +165,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             mMap.clear();
 
+
+
             ArrayList<Admin> mCheckedAdmin = showResult();
             for(Admin admin: mCheckedAdmin ){
                 pinMarkers(admin);
 
             }
+
+
 
         }
 
@@ -221,7 +222,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public ArrayList<Admin> showResult() {
         ArrayList<Admin> checkedAdmin = new ArrayList<>();
         for (Admin p : boxAdapter.getBox()) {
-            if (p.box) {
+            if (p.isBox()) {
                 checkedAdmin.add(p);
 
 
@@ -241,7 +242,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (int j = 0; j < mPoints.size(); j++) {
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(mPoints.get(j).getLatitude(), mPoints.get(j).getLongitude()))
-                    .title(mPoints.get(j).date)
+                    .title(mPoints.get(j).getDate())
                     .icon(BitmapDescriptorFactory.defaultMarker(admins.get(position).getfColor())));
         }
 
@@ -255,7 +256,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (int j = 0; j < mPoints.size(); j++) {
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(mPoints.get(j).getLatitude(), mPoints.get(j).getLongitude()))
-                    .title(mPoints.get(j).date)
+                    .title(mPoints.get(j).getDate())
                     .icon(BitmapDescriptorFactory.defaultMarker(admin.getfColor())));
         }
 
@@ -274,6 +275,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onMapClick(LatLng latLng) {
 
                 mMap.clear();
+
 
             }
         });
@@ -371,14 +373,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     double lng = Double.parseDouble(point.get("lng"));
                     LatLng position = new LatLng(lat, lng);
 
-
                     points.add(position);
                 }
 
                 lineOptions.addAll(points);
                 lineOptions.color(getResources().getColor(color));
                 lineOptions.width(8);
-
                 lineOptions.geodesic(true);
 
             }
